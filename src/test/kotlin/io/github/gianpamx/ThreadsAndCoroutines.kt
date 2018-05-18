@@ -90,4 +90,22 @@ class ThreadsAndCoroutines {
 
         assertThat(sum, IsEqual(sumOf1To(n)))
     }
+
+    private suspend fun workload(n: Int): Int {
+        delay(1000)
+        return n
+    }
+
+    @Test
+    fun suspendingFunctions() {
+        val deferred = async {
+            workload(10)
+        }
+
+        val result = runBlocking {
+            deferred.await()
+        }
+
+        assertThat(result, IsEqual(10))
+    }
 }

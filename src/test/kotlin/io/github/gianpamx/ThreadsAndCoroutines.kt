@@ -1,5 +1,6 @@
 package io.github.gianpamx
 
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
@@ -71,5 +72,22 @@ class ThreadsAndCoroutines {
             }
 
         assertThat(c.get(), IsEqual(sumOf1To(n)))
+    }
+
+    @Test
+    fun waitForALotOfCoroutines() {
+        val n = 1_000_000
+
+        val deferred = (1..n).map { i ->
+            async {
+                i
+            }
+        }
+
+        val sum = runBlocking {
+            deferred.sumBy { it.await() }
+        }
+
+        assertThat(sum, IsEqual(sumOf1To(n)))
     }
 }

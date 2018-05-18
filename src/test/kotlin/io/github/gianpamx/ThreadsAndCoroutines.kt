@@ -3,6 +3,8 @@ package io.github.gianpamx
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
+import org.hamcrest.core.IsEqual
+import org.junit.Assert.assertThat
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -53,5 +55,21 @@ class ThreadsAndCoroutines {
             }
 
         println(c.get())
+    }
+
+    private fun sumOf1To(n: Int) = (n / 2) * (n + 1)
+
+    @Ignore("Test finishes while some coroutines haven't")
+    @Test
+    fun aLotOfCoroutines() {
+        val n = 1_000_000
+        val c = AtomicInteger()
+
+        for (i in 1..n)
+            launch {
+                c.addAndGet(i)
+            }
+
+        assertThat(c.get(), IsEqual(sumOf1To(n)))
     }
 }
